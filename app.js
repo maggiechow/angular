@@ -1,35 +1,36 @@
-var app = angular.module('weatherNews', ['ui.router'])
+var app = angular.module('flapperNews', ['ui.router'])
+
 app.config([
 '$stateProvider',
 '$urlRouterProvider',
 function($stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
-      url: '/home',
-      templateUrl: '/home.html',
-      controller: 'MainCtrl'
+     url: '/home',
+     templateUrl: '/home.html',
+     controller: 'MainCtrl'
     })
     .state('posts', {
-      url: '/posts/{id}',
-      templateUrl: '/posts.html',
-      controller: 'PostsCtrl'
+     url: '/posts/{id}',
+     templateUrl: '/posts.html',
+     controller: 'PostsCtrl'
     });
-
+    
   $urlRouterProvider.otherwise('home');
-}]) 
-app.factory('postFactory', [function(){
+}]);
+app.factory('posts', [function(){
   var o = {
     posts: []
   };
   return o;
-}])
+}]);
 app.controller('MainCtrl', [
 '$scope',
-'postFactory',
-function($scope, postFactory){
+'posts',
+function($scope, posts){
   $scope.test = 'Hello world!';
 
-  $scope.posts = postFactory.posts;
+  $scope.posts = posts.posts;
 
   $scope.addPost = function(){
     if($scope.formContent === '') { return; }
@@ -37,20 +38,20 @@ function($scope, postFactory){
       title: $scope.formContent,
       upvotes: 0,
       comments: [
-      ]
+           {author: 'Joe', body: 'Cool post!', upvotes: 0},
+    {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
+          ]
     });
     $scope.formContent = '';
-  };
-
+         };
   $scope.incrementUpvotes = function(post) {
     post.upvotes += 1;
-  };
-
+         };
 }])
-app.controller('PostsCtrl', [
-'$scope',
-'$stateParams',
-'postFactory',
+    app.controller('PostsCtrl', [
+    '$scope',
+    '$stateParams',
+    'postFactory',
 function($scope, $stateParams, postFactory){
   $scope.post = postFactory.posts[$stateParams.id];
   
